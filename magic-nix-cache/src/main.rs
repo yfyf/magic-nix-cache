@@ -131,6 +131,9 @@ struct Args {
     /// (GHA only) Whether to cache the closure of the to-be-cached store paths
     #[arg(long, default_value_t = true)]
     gha_compute_closure: bool,
+
+    #[arg(long, default_value_t = false)]
+    read_only: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, clap::ValueEnum)]
@@ -225,6 +228,8 @@ struct StateInner {
 
     /// The paths in the Nix store when Magic Nix Cache started, if store diffing is enabled.
     original_paths: Option<Mutex<HashSet<PathBuf>>>,
+
+    read_only: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -418,6 +423,7 @@ async fn main_cli() -> Result<()> {
         flakehub_state: RwLock::new(flakehub_state),
         logfile: guard.logfile,
         original_paths,
+        read_only: args.read_only,
     });
 
     if dnixd_available == Dnixd::Available {
