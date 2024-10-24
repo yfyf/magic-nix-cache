@@ -127,6 +127,10 @@ struct Args {
     /// Whether or not to diff the store before and after Magic Nix Cache runs
     #[arg(long, default_value_t = false)]
     diff_store: bool,
+
+    /// (GHA only) Whether to cache the closure of the to-be-cached store paths
+    #[arg(long, default_value_t = true)]
+    gha_compute_closure: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, clap::ValueEnum)]
@@ -375,6 +379,7 @@ async fn main_cli() -> Result<()> {
             store.clone(),
             metrics.clone(),
             narinfo_negative_cache.clone(),
+            args.gha_compute_closure
         )
         .with_context(|| "Failed to initialize GitHub Actions Cache API")?;
 
